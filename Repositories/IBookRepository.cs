@@ -13,6 +13,7 @@ namespace BookAPI.Repositories
         Task<Book> CreateBook(Book book);
         Task UpdateBook(Book book);
         Task DeleteBook(int id);
+        Task<IEnumerable<Book>> GetBooksByPage(int pageNumber, int pageSize); // Added method
         Task<bool> BookExists(int id);
     }
 }

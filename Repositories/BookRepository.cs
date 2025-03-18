@@ -63,6 +63,11 @@ namespace BookAPI.Repositories
             }
         }
 
+        public async Task<IEnumerable<Book>> GetBooksByPage(int pageNumber, int pageSize)
+        {
+            return await _context.Books.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+        
         public async Task<bool> BookExists(int id)
         {
             return await _context.Books.AnyAsync(e => e.Id == id);

@@ -235,5 +235,31 @@ namespace BookAPI.Controllers
                 return StatusCode(500, "An error occurred while deleting the book. " + ex.Message);
             }
         }
+
+
+        // Create an action method to return the list of books in a paginated format
+        [HttpGet("page/{pageNumber}/{pageSize}")]
+        public async Task<ActionResult<IEnumerable<Book>>> GetBooksByPage(int pageNumber, int pageSize)
+        {
+            _logger.LogInformation("Fetching books for page {PageNumber} with page size {PageSize}.", pageNumber, pageSize);
+            try
+            {
+                var books = await _bookRepository.GetBooksByPage(pageNumber, pageSize);
+
+                if (books == null || books.Count() == 0)
+                {
+                    _logger.LogWarning("No books found for page {PageNumber} with page size {PageSize}.", pageNumber, pageSize);
+                    return NotFound();
+                }
+
+                _logger.LogInformation("Successfully fetched books for page {PageNumber} with page size {PageSize}.", pageNumber, pageSize);
+                return Ok(books);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving books for page {PageNumber} with page size {PageSize}.", pageNumber, pageSize);
+                return StatusCode(500, "An error occurred while retrieving books by page. " + ex.Message);
+            }
+        }
     }
 }
