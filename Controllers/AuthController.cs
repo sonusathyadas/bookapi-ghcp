@@ -1,3 +1,4 @@
+using BookAPI.Data;
 using BookAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -11,8 +12,15 @@ namespace BookAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly BookContext _context;
         private readonly IConfiguration _configuration;
-
+    
+        public AuthController(BookContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
+        
         public AuthController(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -49,6 +57,24 @@ namespace BookAPI.Controllers
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+    
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] User user)
+        {
+            
+            // Check if the username or email already exists
+            if (_context.Users.Any(u => u.Username == user.Username || u.Email == user.Email))
+            {
+                return BadRequest("Username or email already exists.");
+            }
+
+            // Add the new user to the database
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            
+
+            return Ok("User registered successfully.");
         }
     }
 }
