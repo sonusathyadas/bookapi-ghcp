@@ -1,3 +1,4 @@
+using BookAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookAPI.Data
@@ -9,11 +10,14 @@ namespace BookAPI.Data
         }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>()
                 .HasKey(b => b.Id);
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
         }
     }
 }
